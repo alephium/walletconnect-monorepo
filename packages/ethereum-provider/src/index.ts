@@ -130,9 +130,8 @@ class EthereumProvider implements IEthereumProvider {
     return (this.signer.connection as SignerConnection).connecting;
   }
 
-  public async enable(): Promise<ProviderAccounts> {
-    const accounts = await this.request({ method: "eth_requestAccounts" });
-    return accounts as ProviderAccounts;
+  public async enable(): Promise<any> {
+    return this.request({ method: "eth_requestAccounts" });
   }
 
   public async connect(): Promise<void> {
