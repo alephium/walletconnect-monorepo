@@ -19,7 +19,8 @@ jobs:
       - name: Get the tag name
         id: get_tag
         run: |
-          tag=$(echo ${GITHUB_REF/refs\/tags\//} | cut -c 2-)
+          tag=$(echo ${GITHUB_REF/refs\/tags\//})
+          echo $tag
           dist_tag=$([[ $tag =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] && echo latest || echo "")
           dist_tag=$([[ $tag =~ ^[0-9]+\.[0-9]+\.[0-9]+-rc\.[0-9]+$ ]] && echo rc || echo $dist_tag)
           [ -z "$dist_tag" ] && echo "Distribution tag is not set to latest nor to rc" && exit 1
@@ -39,13 +40,11 @@ jobs:
         with:
           node-version: 16
           registry-url: 'https://registry.npmjs.org'
-      - name: Build package
+      - name: Build and publish package
         run: |
           cd packages/alephium-provider/
           npm ci
           npm run build
-      - name: Publish to npm
-        run: |
           npm pack
           npm publish alephium-walletconnect-provider-*.tgz --access public --tag ${{ needs.get_dist_tag.outputs.DIST_TAG }}
         env:
